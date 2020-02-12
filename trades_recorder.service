@@ -1,0 +1,28 @@
+[Unit]
+
+Description=ccxt recorder
+
+Wants=network-online.target influxd.service
+
+After=network-online.target influxd.service
+
+
+[Service]
+
+Type=simple
+
+WorkingDirectory=/home/ec2-user/ccxt-recorder
+
+ExecStart=/usr/bin/python3 /home/ec2-user/ccxt-recorder/recorder.py
+
+Environment=PYTHONUNBUFFERED=1
+
+Restart=on-failure
+
+User=ec2-user
+
+
+[Install]
+
+# Start at boot
+WantedBy=network-online.target
