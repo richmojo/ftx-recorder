@@ -3,10 +3,10 @@ import logging
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
-from exchange import Exchange
+from config import Exchange
 
 
-class Recorder:
+class AccountRecorder:
     def __init__(self, symbol="XBTUSD", **kwargs):
 
         self.client = InfluxDBClient(

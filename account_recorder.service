@@ -1,6 +1,6 @@
 [Unit]
 
-Description=ccxt recorder
+Description=trades recorder
 
 Wants=network-online.target influxd.service
 
@@ -11,9 +11,9 @@ After=network-online.target influxd.service
 
 Type=simple
 
-WorkingDirectory=/home/ec2-user/ccxt-recorder
+WorkingDirectory=/home/ec2-user/ftx-recorder
 
-ExecStart=/usr/bin/python3 /home/ec2-user/ccxt-recorder/recorder.py
+ExecStart=/usr/bin/python3 /home/ec2-user/ftx-recorder/account_recorder.py
 
 Environment=PYTHONUNBUFFERED=1
 
