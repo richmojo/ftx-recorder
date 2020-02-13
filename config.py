@@ -1,10 +1,12 @@
 import ccxt
 
 
+# account recorder
 Exchange = ccxt.ftx({
     'apiKey': "",
     'secret': "",
     'timeout': 2000,
+    'enableRateLimit': True,
 })
 
 
@@ -15,7 +17,7 @@ TRADESBUCKET = 'trades-bucket'
 ACCOUNTBUCKET = 'account-bucket'
 TOKEN = 'token-something-like-end-with-=='
 
-Exchange.load_markets()
+_ = Exchange.load_markets()
 
 PAIRS = Exchange.symbols
 PAIRS = [pair for pair in PAIRS if pair.endswith("PERP")]

@@ -2,6 +2,7 @@ from cryptofeed.backends.influxdb import TradeInflux
 from cryptofeed import FeedHandler
 from cryptofeed.exchanges import FTX
 from cryptofeed.defines import TRADES
+import time
 
 from config import *
 
@@ -18,4 +19,5 @@ if __name__ == '__main__':
         try:
             main()
         except Exception:
+            time.sleep(1)
             continue

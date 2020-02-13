@@ -1,197 +1,203 @@
-import logging
+from influxdb_client import InfluxDBClient
+import time
+from datetime import datetime
 
-from influxdb import InfluxDBClient
-from influxdb.exceptions import InfluxDBClientError
-
-from config import Exchange
+from config import *
 
 
-class AccountRecorder:
-    def __init__(self, symbol="XBTUSD", **kwargs):
+client = InfluxDBClient(url=ADDR, token=TOKEN, org=ORG)
 
-        self.client = InfluxDBClient(
-            host="localhost", port=8086, database=MainConfig["database_name"]
+write_api = client.write_api()
+
+
+def get_account():
+    try:
+        account = Exchange.privateGetAccount()
+    except ccxt.BaseError:
+        pass
+    else:
+        t = datetime.utcnow().isoformat()
+        account = account["result"]
+        positions = account["positions"]
+
+        account_write = {
+            "measurement": "account",
+            "tags": {
+                "username": account["username"],
+            },
+            "fields": {
+                "collateral": account["collateral"],
+                "freeCollateral": account["freeCollateral"],
+                "marginFraction": account["marginFraction"],
+                "openMarginFraction": account["openMarginFraction"],
+                "totalAccountValue": account["totalAccountValue"],
+                "totalPositionSize": account["totalPositionSize"],
+            },
+            "time": t,
+        }
+        account_write["fields"] = {k: v for k, v in account_write["fields"].items() if v is not None}
+        write_api.write(
+            ACCOUNTBUCKET,
+            ORG,
+            [account_write]
         )
 
-        try:
-            self.client.create_database(MainConfig["database_name"])
-        except InfluxDBClientError:
-            self.client.switch_database(MainConfig["database_name"])
+        if positions:
+            positions_write = [{
+                "measurement": "positions",
+                "tags": {
+                    "future": p["future"],
+                },
+                "fields": {
+                    "collateralUsed": p["collateralUsed"],
+                    "cost": p["cost"],
+                    "entryPrice": p["entryPrice"],
+                    "estimatedLiquidationPrice": p["estimatedLiquidationPrice"],
+                    "netSize": p["netSize"],
+                    "openSize": p["openSize"],
+                    "realizedPnl": p["realizedPnl"],
+                    "side": p["side"],
+                    "size": p["size"],
+                    "unrealizedPnl": p["unrealizedPnl"],
+                },
+                "time": t,
+            } for p in positions]
+            for p in positions_write:
+                p["fields"] = {k: v for k, v in p["fields"].items() if v is not None}
+            write_api.write(
+                ACCOUNTBUCKET,
+                ORG,
+                positions_write
+            )
 
-        websocket.enableTrace(True)
 
-        channels = [
-            InstrumentChannels.trade,
-            SecureChannels.margin,
-            SecureInstrumentChannels.position,
-            SecureInstrumentChannels.order,
-        ]
+def get_balances():
+    try:
+        balances = Exchange.fetchBalance()
+    except ccxt.BaseError:
+        pass
+    else:
+        t = datetime.utcnow().isoformat()
+        balances = balances["info"]["result"]
 
-        super().__init__(symbol=symbol, channels=channels, **kwargs)
+        balances_write = [{
+            "measurement": "balances",
+            "tags": {
+                "coin": c["coin"],
+            },
+            "fields": {
+                "free": c["free"],
+                "total": c["total"],
+                "usdValue": c["usdValue"],
+            },
+            "time": t,
+        } for c in balances]
+        write_api.write(
+            ACCOUNTBUCKET,
+            ORG,
+            balances_write
+        )
 
-    def on_action(self, message):
-        t = threading.Thread(target=self._on_action, args=(message,))
-        t.start()
 
-    def _on_action(self, message):
-        data_list = message["data"]
-        try:
-            # order
-            if message["table"] == "order":
-                alog.info('%s' % message)
-                if "ordType" in data_list[0]:
-                    # limit
-                    if data_list[0]["ordType"] == "Limit":
-                        data = [
-                            {
-                                "measurement": "limitorder",
-                                "tags": {
-                                    "symbol": d["symbol"],
-                                    "side": d["side"],
-                                    "ordType": d["ordType"],
-                                    "ordStatus": d["ordStatus"],
-                                },
-                                "time": d["timestamp"],
-                                "fields": {
-                                    "orderQty": d["orderQty"],
-                                    "price": float(d["price"]),
-                                },
-                            }
-                            for d in data_list
-                        ]
-                    # market
-                    else:
-                        data = [
-                            {
-                                "measurement": "marketorder",
-                                "tags": {
-                                    "symbol": d["symbol"],
-                                    "side": d["side"],
-                                    "ordType": d["ordType"],
-                                    "ordStatus": d["ordStatus"],
-                                },
-                                "time": d["timestamp"],
-                                "fields": {"orderQty": d["orderQty"]},
-                            }
-                            for d in data_list
-                        ]
-                # updates
-                else:
-                    if "ordStatus" in data_list[0]:
-                        data = [
-                            {
-                                "measurement": "orderfill",
-                                "tags": {
-                                    "ordStatus": d["ordStatus"]
-                                },
-                                "time": d["timestamp"],
-                                "fields": {
-                                    "cumQty": d["cumQty"],
-                                    "avgPx": float(d["avgPx"])
-                                },
-                            }
-                            for d in data_list
-                        ]
-                    else:
-                        return
+def get_orders():
+    # grab last 5 minutes worth
+    since = int(time.time() - 300)
+    try:
+        orders = Exchange.privateGetOrdersHistory(params={'start_time': since})
+    except ccxt.BaseError:
+        pass
+    else:
+        orders = orders["result"]
 
-            # position
-            elif message["table"] == "position":
-                fields = [
-                    "commission",
-                    "initMarginReq",
-                    "maintMarginReq",
-                    "leverage",
-                    "rebalancedPnl",
-                    "currentQty",
-                    "currentComm",
-                    "markPrice",
-                    "markValue",
-                    "posMargin",
-                    "realisedPnl",
-                    "unrealisedGrossPnl",
-                    "avgEntryPrice",
-                    "breakEvenPrice",
-                    "liquidationPrice",
-                    "unrealisedPnl",
-                    "lastPrice",
-                    "lastValue",
-                ]
-                data = [
-                    {
-                        "measurement": "position",
-                        "tags": {"symbol": d["symbol"]},
-                        "time": d["timestamp"],
-                        "fields": {
-                            k: float(d[k])
-                            for k in fields
-                            if k in d and isinstance(d[k], (int, float))
-                        },
-                    }
-                    for d in data_list
-                ]
-            # trade
-            elif message["table"] == "trade":
-                data = [
-                    {
-                        "measurement": "trade",
-                        "tags": {
-                            "symbol": d["symbol"],
-                            "side": d["side"],
-                            "tickDirection": d["tickDirection"],
-                        },
-                        "time": d["timestamp"],
-                        "fields": {
-                            "size": d["size"],
-                            "price": float(d["price"]),
-                            "grossValue": d["grossValue"],
-                            "homeNotional": float(d["homeNotional"]),
-                        },
-                    }
-                    for d in data_list
-                ]
-            # margin
-            else:
-                fields = [
-                    "grossMarkValue",
-                    "marginBalance",
-                    "walletBalance",
-                    "marginLeverage",
-                    "marginUsedPcnt",
-                    "grossLastValue",
-                ]
-                data = [
-                    {
-                        "measurement": "margin",
-                        "tags": {"currency": d["currency"]},
-                        "time": d["timestamp"],
-                        "fields": {
-                            k: float(d[k])
-                            for k in fields
-                            if k in d and isinstance(d[k], (int, float))
-                        },
-                    }
-                    for d in data_list
-                ]
+        if orders:
+            orders_write = [{
+                "measurement": "orders",
+                "tags": {
+                    "future": o["future"],
+                    "market": o["market"],
+                    "type": o["type"],
+                },
+                "fields": {
+                    "avgFillPrice": o["avgFillPrice"],
+                    "filledSize": o["filledSize"],
+                    "id": o["id"],
+                    "price": o["price"],
+                    "reduceOnly": o["reduceOnly"],
+                    "side": o["side"],
+                    "size": o["size"],
+                    "status": o["status"],
+                },
+                "time": o["createdAt"],
+            } for o in orders]
+            for o in orders_write:
+                o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
+            write_api.write(
+                ACCOUNTBUCKET,
+                ORG,
+                orders_write
+            )
 
-        except Exception as e:
-            alog.error("%s" % e)
-            alog.error("%s" % message)
-            return
 
-        return self.client.write_points(data, time_precision="ms")
+def get_fills():
+    # grab last 5 minutes worth
+    since = int(time.time() - 300)
+    try:
+        fills = Exchange.privateGetFills(params={'start_time': since})
+    except ccxt.BaseError:
+        pass
+    else:
+        fills = fills["result"]
+
+        if fills:
+            fills_write = [{
+                "measurement": "orders",
+                "tags": {
+                    "future": o["future"],
+                    "market": o["market"],
+                    "type": o["type"],
+                },
+                "fields": {
+                    "fee": o["fee"],
+                    "feeRate": o["feeRate"],
+                    "id": o["id"],
+                    "liquidity": o["liquidity"],
+                    "orderId": o["orderId"],
+                    "price": o["price"],
+                    "side": o["side"],
+                    "size": o["size"],
+                    "type": o["type"],
+                },
+                "time": o["time"],
+            } for o in fills]
+            for o in fills_write:
+                o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
+            write_api.write(
+                ACCOUNTBUCKET,
+                ORG,
+                fills_write
+            )
+
+
+def recorder():
+    get_account()
+    get_balances()
+    get_orders()
+    get_fills()
 
 
 def main():
-    emitter = Ticker("XBTUSD", should_auth=True)
-    emitter.run_forever()
+    while True:
+        recorder()
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":
-    alog.set_level(logging.DEBUG)
     while True:
         try:
             main()
-        except BitMEXWebsocketConnectionError:
-            alog.error("Websocket closed, reopening.")
+        except ccxt.BaseError:
+            time.sleep(1)
+            continue
+        except Exception:
+            time.sleep(1)
             continue
