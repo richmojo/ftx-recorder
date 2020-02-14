@@ -1,6 +1,5 @@
 import time
 from datetime import datetime
-import threading
 import logging
 import sys
 from influxdb import InfluxDBClient
@@ -41,7 +40,7 @@ def get_account():
         account = Exchange.privateGetAccount()
     except ccxt.BaseError as e:
         logger.error(f"Could not get account with error: {e}")
-        return
+        raise e
     else:
         logger.info("Writing account.")
         t = datetime.utcnow().isoformat()
@@ -97,7 +96,7 @@ def get_balances():
         balances = Exchange.fetchBalance()
     except ccxt.BaseError as e:
         logger.error(f"Could not get balances with error: {e}")
-        return
+        raise e
     else:
         logger.info("Writing balances.")
         t = datetime.utcnow().isoformat()
@@ -125,7 +124,7 @@ def get_orders():
         orders = Exchange.privateGetOrdersHistory(params={'start_time': since})
     except ccxt.BaseError as e:
         logger.error(f"Could not get order history with error: {e}")
-        return
+        raise e
     else:
         logger.info("Writing orders.")
         orders = orders["result"]
@@ -165,7 +164,7 @@ def get_fills():
         fills = Exchange.privateGetFills(params={'start_time': since})
     except ccxt.BaseError as e:
         logger.error(f"Could not get fills history with error: {e}")
-        return
+        raise e
     else:
         logger.info("Writing fills.")
         fills = fills["result"]
@@ -198,29 +197,18 @@ def get_fills():
 
 
 def recorder():
-    logger.info("Starting round.")
-    threads = [
-        threading.Thread(target=get_account),
-        threading.Thread(target=get_balances),
-        threading.Thread(target=get_orders),
-        threading.Thread(target=get_fills),
-    ]
-    for thread in threads:
-        thread.start()
-        thread.join()
-
-
-def main():
-    logger.info("Starting Main.")
     while True:
-        recorder()
-        time.sleep(1.0)
+        get_account()
+        get_balances()
+        get_orders()
+        get_fills()
+        time.sleep(0.5)
 
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
     try:
-        main()
+        recorder()
     except ccxt.BaseError as ee:
         logger.error(f"Main ccxt error {ee}")
         sys.exit(1)
