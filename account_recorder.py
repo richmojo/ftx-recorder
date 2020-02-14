@@ -153,7 +153,6 @@ def get_orders():
                 "fields": {
                     "avgFillPrice": o["avgFillPrice"],
                     "filledSize": o["filledSize"],
-                    "id": o["id"],
                     "price": o["price"],
                     "size": o["size"],
                 },
