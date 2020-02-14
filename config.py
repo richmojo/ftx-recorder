@@ -1,21 +1,12 @@
 import ccxt
 
 
-# account recorder
 Exchange = ccxt.ftx({
     'apiKey': "",
     'secret': "",
     'timeout': 2000,
-    'enableRateLimit': True,
+    'enableRateLimit': False,
 })
-
-
-# trades recorder
-ADDR = 'https://localhost:9999'
-ORG = 'my-org'
-TRADESBUCKET = 'trades-bucket'
-ACCOUNTBUCKET = 'account-bucket'
-TOKEN = 'token-something-like-end-with-=='
 
 _ = Exchange.load_markets()
 

@@ -1,12 +1,21 @@
 #!/bin/bash
 
-echo "Installing requirements"
+echo "Updating system"
+sudo yum update -y
+
+# influxdb
+echo "Installing influxdb"
+wget https://dl.influxdata.com/influxdb/releases/influxdb-1.7.10.x86_64.rpm
+sudo yum localinstall -y influxdb-1.7.10.x86_64.rpm
+sudo systemctl daemon-reload
+sudo systemctl start influxdb
+echo "influxdb started"
+
+# bitmex recorder
+echo "Installing trades recorder"
 sudo yum install -y python3 python3-pip
 sudo -H pip3 install -U pip
 pip3 install -U --no-cache-dir -r requirements.txt
-
-# trades recorder
-echo "Installing trades recorder"
 sudo cp trades_recorder.service /etc/systemd/system
 sudo chown -R root:root /etc/systemd/system/trades_recorder.service
 sudo chmod -R 644 /etc/systemd/system/trades_recorder.service

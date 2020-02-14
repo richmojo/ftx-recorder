@@ -2,10 +2,6 @@
 
 Start with Amazon Linux 2 Image
 
-Follow instructions (here)[https://v2.docs.influxdata.com/v2.0/get-started/] to install influxdb 2.0,
-create an organization, create two buckets for both the account recorder and the trades recorder, 
-and make a security token, then put them in config.py.
-
 Fetch recorder from GitHub
 
 `sudo yum install git`

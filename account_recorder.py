@@ -1,13 +1,20 @@
-from influxdb_client import InfluxDBClient
 import time
 from datetime import datetime
+import threading
+from influxdb import InfluxDBClient
+from influxdb.exceptions import InfluxDBClientError
 
 from config import *
 
 
-client = InfluxDBClient(url=ADDR, token=TOKEN, org=ORG)
+client = InfluxDBClient(
+    host="localhost", port=8086, database="accountdb"
+)
 
-write_api = client.write_api()
+try:
+    client.create_database("accountdb")
+except InfluxDBClientError:
+    client.switch_database("accountdb")
 
 
 def get_account():
@@ -36,11 +43,7 @@ def get_account():
             "time": t,
         }
         account_write["fields"] = {k: v for k, v in account_write["fields"].items() if v is not None}
-        write_api.write(
-            ACCOUNTBUCKET,
-            ORG,
-            [account_write]
-        )
+        client.write_points(account_write, time_precision="ms")
 
         if positions:
             positions_write = [{
@@ -64,11 +67,7 @@ def get_account():
             } for p in positions]
             for p in positions_write:
                 p["fields"] = {k: v for k, v in p["fields"].items() if v is not None}
-            write_api.write(
-                ACCOUNTBUCKET,
-                ORG,
-                positions_write
-            )
+            client.write_points(positions_write, time_precision="ms")
 
 
 def get_balances():
@@ -92,11 +91,7 @@ def get_balances():
             },
             "time": t,
         } for c in balances]
-        write_api.write(
-            ACCOUNTBUCKET,
-            ORG,
-            balances_write
-        )
+        client.write_points(balances_write, time_precision="ms")
 
 
 def get_orders():
@@ -131,11 +126,7 @@ def get_orders():
             } for o in orders]
             for o in orders_write:
                 o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
-            write_api.write(
-                ACCOUNTBUCKET,
-                ORG,
-                orders_write
-            )
+            client.write_points(orders_write, time_precision="ms")
 
 
 def get_fills():
@@ -171,24 +162,25 @@ def get_fills():
             } for o in fills]
             for o in fills_write:
                 o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
-            write_api.write(
-                ACCOUNTBUCKET,
-                ORG,
-                fills_write
-            )
+            client.write_points(fills_write, time_precision="ms")
 
 
 def recorder():
-    get_account()
-    get_balances()
-    get_orders()
-    get_fills()
+    threads = [
+        threading.Thread(target=get_account),
+        threading.Thread(target=get_balances),
+        threading.Thread(target=get_orders),
+        threading.Thread(target=get_fills),
+    ]
+    for thread in threads:
+        thread.start()
+        thread.join()
 
 
 def main():
     while True:
         recorder()
-        time.sleep(0.5)
+        time.sleep(1.0)
 
 
 if __name__ == "__main__":
