@@ -141,27 +141,27 @@ def get_fills():
 
         if fills:
             fills_write = [{
-                "measurement": "orders",
+                "measurement": "fills",
                 "tags": {
-                    "future": o["future"],
-                    "market": o["market"],
-                    "type": o["type"],
+                    "future": f["future"],
+                    "market": f["market"],
+                    "type": f["type"],
                 },
                 "fields": {
-                    "fee": o["fee"],
-                    "feeRate": o["feeRate"],
-                    "id": o["id"],
-                    "liquidity": o["liquidity"],
-                    "orderId": o["orderId"],
-                    "price": o["price"],
-                    "side": o["side"],
-                    "size": o["size"],
-                    "type": o["type"],
+                    "fee": f["fee"],
+                    "feeRate": f["feeRate"],
+                    "id": f["id"],
+                    "liquidity": f["liquidity"],
+                    "orderId": f["orderId"],
+                    "price": f["price"],
+                    "side": f["side"],
+                    "size": f["size"],
+                    "type": f["type"],
                 },
-                "time": o["time"],
-            } for o in fills]
-            for o in fills_write:
-                o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
+                "time": f["time"],
+            } for f in fills]
+            for f in fills_write:
+                f["fields"] = {k: v for k, v in f["fields"].items() if v is not None}
             client.write_points(fills_write, time_precision="ms")
 
 
