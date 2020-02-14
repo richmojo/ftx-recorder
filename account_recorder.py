@@ -8,8 +8,17 @@ from influxdb.exceptions import InfluxDBClientError
 from config import *
 
 
-logger = logging.getLogger("account_recorder")
+formatter = logging.Formatter(
+    fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
+)
 
+stream_handler = logging.StreamHandler()
+stream_handler.setFormatter(formatter)
+stream_handler.setLevel(logging.INFO)
+
+logger = logging.getLogger("account_recorder")
+logger.setLevel(logging.INFO)
+logger.addHandler(stream_handler)
 
 client = InfluxDBClient(
     host="localhost", port=8086, database="accountdb"
