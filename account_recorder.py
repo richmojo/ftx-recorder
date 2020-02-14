@@ -124,7 +124,7 @@ def get_orders():
                     "price": o["price"],
                     "size": o["size"],
                 },
-                "time": o["createdAt"],
+                "time": o["createdAt"][:-6],
             } for o in orders]
             for o in orders_write:
                 o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
@@ -160,7 +160,7 @@ def get_fills():
                     "size": f["size"],
                     "type": f["type"],
                 },
-                "time": f["time"],
+                "time": f["time"][:-6],
             } for f in fills]
             for f in fills_write:
                 f["fields"] = {k: v for k, v in f["fields"].items() if v is not None}
