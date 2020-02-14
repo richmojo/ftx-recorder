@@ -154,6 +154,7 @@ def get_orders():
             } for o in orders]
             for o in orders_write:
                 o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
+                o["tags"] = {k: v for k, v in o["tags"].items() if v is not None}
             client.write_points(orders_write)
 
 
@@ -192,6 +193,7 @@ def get_fills():
             } for f in fills]
             for f in fills_write:
                 f["fields"] = {k: v for k, v in f["fields"].items() if v is not None}
+                f["tags"] = {k: v for k, v in f["tags"].items() if v is not None}
             client.write_points(fills_write)
 
 
