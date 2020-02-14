@@ -2,6 +2,7 @@ import time
 from datetime import datetime
 import threading
 import logging
+import sys
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
@@ -208,24 +209,19 @@ def recorder():
 
 
 def main():
+    logger.info("Starting Main.")
     while True:
-        logger.info("Starting Main.")
         recorder()
         time.sleep(1.0)
 
 
 if __name__ == "__main__":
-    while True:
-        logger.info("Starting account recorder.")
-        try:
-            main()
-        except ccxt.BaseError as ee:
-            logger.error(f"Main ccxt error {ee}")
-            time.sleep(1)
-            logger.warning("Restarting.")
-            continue
-        except Exception as ee:
-            logger.error(f"Main error {ee}")
-            time.sleep(1)
-            logger.warning("Restarting.")
-            continue
+    logger.info("Starting account recorder.")
+    try:
+        main()
+    except ccxt.BaseError as ee:
+        logger.error(f"Main ccxt error {ee}")
+        sys.exit(1)
+    except Exception as ee:
+        logger.error(f"Main error {ee}")
+        sys.exit(1)
