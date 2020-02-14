@@ -25,8 +25,8 @@ client = InfluxDBClient(
 )
 
 if drop_db:
+    logger.info("Deleting existing account database.")
     try:
-        logger.info("Deleting Existing account database.")
         client.drop_database("accountdb")
     except InfluxDBClientError:
         client.create_database("accountdb")
@@ -39,6 +39,8 @@ else:
         client.create_database("accountdb")
     except InfluxDBClientError:
         logger.info("Using existing account database.")
+    else:
+        logger.info("Created new account database.")
 
 
 def get_account():
