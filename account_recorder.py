@@ -71,7 +71,7 @@ def get_account():
             },
             "time": t,
         }
-        account_write["fields"] = {k: v for k, v in account_write["fields"].items() if v is not None}
+        account_write["fields"] = {k: float(v) for k, v in account_write["fields"].items() if v is not None}
         client.write_points([account_write])
 
         if positions:
@@ -80,6 +80,7 @@ def get_account():
                 "measurement": "positions",
                 "tags": {
                     "future": p["future"],
+                    "side": p["side"],
                 },
                 "fields": {
                     "collateralUsed": p["collateralUsed"],
@@ -89,14 +90,13 @@ def get_account():
                     "netSize": p["netSize"],
                     "openSize": p["openSize"],
                     "realizedPnl": p["realizedPnl"],
-                    "side": p["side"],
                     "size": p["size"],
                     "unrealizedPnl": p["unrealizedPnl"],
                 },
                 "time": t,
             } for p in positions]
             for p in positions_write:
-                p["fields"] = {k: v for k, v in p["fields"].items() if v is not None}
+                p["fields"] = {k: float(v) for k, v in p["fields"].items() if v is not None}
             client.write_points(positions_write)
 
 
@@ -117,9 +117,9 @@ def get_balances():
                 "coin": c["coin"],
             },
             "fields": {
-                "free": c["free"],
-                "total": c["total"],
-                "usdValue": c["usdValue"],
+                "free": float(c["free"]),
+                "total": float(c["total"]),
+                "usdValue": float(c["usdValue"]),
             },
             "time": t,
         } for c in balances]
@@ -149,7 +149,6 @@ def get_orders():
                     "reduceOnly": o["reduceOnly"],
                     "status": o["status"],
                     "postOnly": o["postOnly"],
-                    "ioc": o["ioc"]
                 },
                 "fields": {
                     "avgFillPrice": o["avgFillPrice"],
@@ -161,8 +160,8 @@ def get_orders():
                 "time": o["createdAt"][:-6] + 'Z',
             } for o in orders]
             for o in orders_write:
-                o["fields"] = {k: v for k, v in o["fields"].items() if v is not None}
-                o["tags"] = {k: v for k, v in o["tags"].items() if v is not None}
+                o["fields"] = {k: float(v) for k, v in o["fields"].items() if v is not None}
+                o["tags"] = {k: str(v) for k, v in o["tags"].items() if v is not None}
             client.write_points(orders_write)
 
 
@@ -191,17 +190,14 @@ def get_fills():
                 "fields": {
                     "fee": f["fee"],
                     "feeRate": f["feeRate"],
-                    "id": f["id"],
-                    "orderId": f["orderId"],
                     "price": f["price"],
                     "size": f["size"],
-                    "type": f["type"],
                 },
                 "time": f["time"][:-6] + 'Z',
             } for f in fills]
             for f in fills_write:
-                f["fields"] = {k: v for k, v in f["fields"].items() if v is not None}
-                f["tags"] = {k: v for k, v in f["tags"].items() if v is not None}
+                f["fields"] = {k: float(v) for k, v in f["fields"].items() if v is not None}
+                f["tags"] = {k: str(v) for k, v in f["tags"].items() if v is not None}
             client.write_points(fills_write)
 
 
