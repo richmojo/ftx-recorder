@@ -43,7 +43,7 @@ def get_account():
             "time": t,
         }
         account_write["fields"] = {k: v for k, v in account_write["fields"].items() if v is not None}
-        client.write_points(account_write, time_precision="ms")
+        client.write_points([account_write], time_precision="ms")
 
         if positions:
             positions_write = [{

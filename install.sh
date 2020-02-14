@@ -31,5 +31,5 @@ sudo chown -R root:root /etc/systemd/system/account_recorder.service
 sudo chmod -R 644 /etc/systemd/system/account_recorder.service
 sudo systemctl daemon-reload
 sudo systemctl enable account_recorder.service
-sudo systemctl enable account_recorder.service
+sudo systemctl start account_recorder.service
 echo "Account recorder started"

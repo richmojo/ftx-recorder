@@ -6,7 +6,7 @@ Fetch recorder from GitHub
 
 `sudo yum install git`
 
-`git clone http://www.github.com/evanatyourservice/bitmex-influxdb`
+`git clone http://www.github.com/evanatyourservice/ftx-recorder`
 
 Check config.py
 
