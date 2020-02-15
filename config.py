@@ -13,4 +13,4 @@ _ = Exchange.load_markets()
 PAIRS = Exchange.symbols
 PAIRS = [pair for pair in PAIRS if pair.endswith("PERP")]
 
-drop_db = False  # if True, deletes any existing account database
+drop_db = False  # if True, deletes existing account database

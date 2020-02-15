@@ -138,8 +138,8 @@ def get_orders(client, first=False):
                 "time": o["createdAt"][:-6] + 'Z',
             } for o in orders]
             for o in orders_write:
-                o["fields"] = {k: float(v) for k, v in o["fields"].items() if v is not None}
                 o["tags"] = {k: str(v) for k, v in o["tags"].items() if v is not None}
+                o["fields"] = {k: float(v) for k, v in o["fields"].items() if v is not None}
             client.write_points(orders_write)
 
 
@@ -177,8 +177,8 @@ def get_fills(client, first=False):
                 "time": f["time"][:-6] + 'Z',
             } for f in fills]
             for f in fills_write:
-                f["fields"] = {k: float(v) for k, v in f["fields"].items() if v is not None}
                 f["tags"] = {k: str(v) for k, v in f["tags"].items() if v is not None}
+                f["fields"] = {k: float(v) for k, v in f["fields"].items() if v is not None}
             client.write_points(fills_write)
 
 
@@ -192,8 +192,10 @@ def recorder():
         try:
             client.drop_database("accountdb")
         except InfluxDBClientError:
+            logger.info("No existing account database.")
             client.create_database("accountdb")
         else:
+            logger.info("Deleted existing account database.")
             client.create_database("accountdb")
         finally:
             logger.info("Created new account database.")
@@ -237,9 +239,6 @@ if __name__ == "__main__":
     while True:
         try:
             recorder()
-        except ccxt.BaseError as e:
-            logger.error(f"Main ccxt error {e}")
-            continue
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
