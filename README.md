@@ -1,24 +1,28 @@
 # ftx-recorder
 
-Records every trades for pairs that end in PERP, all of your personal trades and fills,
-and all your account data.
+Records every trade on FTX for pairs that end in PERP, all of your personal trades and fills,
+and all your account data to influxdb (mainly to be visualized using grafana).
 
-There are two recorders, one for the trades, one for the account. They are restarted by systemd
-if they fail, and start automatically at boot.
+There are two recorders, one for the trades, one for the account, which are both managed by systemd. 
+They are restarted automatically if they fail, and start automatically at boot.
 
 ## Install
 
-Start with Amazon Linux 2 Image
+Meant for an Amazon Linux 2 Image on AWS.
 
-Fetch repo from GitHub
+Fetch repo from GitHub.
 
 `sudo yum install git`
 
 `git clone http://www.github.com/evanatyourservice/ftx-recorder`
 
+`cd ftx-recorder`
+
 Check config.py, put in your API key.
 
-Starts automatically after install
+`nano config.py`
+
+Simple install using bash, starts automatically after install.
 
 `bash install.sh`
 
@@ -28,8 +32,8 @@ To update:
 
 ## systemd
 
-recorders are run as services through systemd, their names are trades_recorder and 
-account_recorder.
+Trades and account recorders are run as services through systemd, their names are trades_recorder and 
+account_recorder. Starting at boot is default.
 
 Some examples:
 
