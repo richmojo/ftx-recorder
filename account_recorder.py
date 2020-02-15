@@ -1,7 +1,6 @@
 import time
 from datetime import datetime
 import logging
-import sys
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
@@ -20,30 +19,8 @@ logger = logging.getLogger("account_recorder")
 logger.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
 
-client = InfluxDBClient(
-    host="localhost", port=8086, database="accountdb"
-)
 
-if drop_db:
-    logger.info("Deleting existing account database.")
-    try:
-        client.drop_database("accountdb")
-    except InfluxDBClientError:
-        client.create_database("accountdb")
-    else:
-        client.create_database("accountdb")
-    finally:
-        logger.info("Created new account database.")
-else:
-    try:
-        client.create_database("accountdb")
-    except InfluxDBClientError:
-        logger.info("Using existing account database.")
-    else:
-        logger.info("Created new account database.")
-
-
-def get_account():
+def get_account(client):
     try:
         account = Exchange.privateGetAccount()
     except ccxt.BaseError as e:
@@ -99,7 +76,7 @@ def get_account():
             client.write_points(positions_write)
 
 
-def get_balances():
+def get_balances(client):
     try:
         balances = Exchange.fetchBalance()
     except ccxt.BaseError as e:
@@ -125,7 +102,7 @@ def get_balances():
         client.write_points(balances_write)
 
 
-def get_orders():
+def get_orders(client):
     # grab last 5 minutes worth
     since = int(time.time() - 300)
     try:
@@ -163,7 +140,7 @@ def get_orders():
             client.write_points(orders_write)
 
 
-def get_fills():
+def get_fills(client):
     # grab last 5 minutes worth
     since = int(time.time() - 300)
     try:
@@ -200,21 +177,60 @@ def get_fills():
 
 
 def recorder():
+    client = InfluxDBClient(
+        host="localhost", port=8086, database="accountdb"
+    )
+
+    if drop_db:
+        logger.info("Deleting existing account database.")
+        try:
+            client.drop_database("accountdb")
+        except InfluxDBClientError:
+            client.create_database("accountdb")
+        else:
+            client.create_database("accountdb")
+        finally:
+            logger.info("Created new account database.")
+    else:
+        try:
+            client.create_database("accountdb")
+        except InfluxDBClientError:
+            logger.info("Using existing account database.")
+        else:
+            logger.info("Created new account database.")
+
     while True:
-        get_account()
-        get_balances()
-        get_orders()
-        get_fills()
+        try:
+            get_account(client)
+        except Exception as e:
+            logger.error(f"account error: {e}")
+            pass
+        try:
+            get_balances(client)
+        except Exception as e:
+            logger.error(f"Balances error: {e}")
+            pass
+        try:
+            get_orders(client)
+        except Exception as e:
+            logger.error(f"Orders error: {e}")
+            pass
+        try:
+            get_fills(client)
+        except Exception as e:
+            logger.error(f"fills error: {e}")
+            pass
         time.sleep(0.5)
 
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
-    try:
-        recorder()
-    except ccxt.BaseError as ee:
-        logger.error(f"Main ccxt error {ee}")
-        sys.exit(1)
-    except Exception as ee:
-        logger.error(f"Main error {ee}")
-        sys.exit(1)
+    while True:
+        try:
+            recorder()
+        except ccxt.BaseError as e:
+            logger.error(f"Main ccxt error {e}")
+            continue
+        except Exception as e:
+            logger.error(f"Main error {e}")
+            continue

@@ -17,7 +17,9 @@ ExecStart=/usr/bin/python3 /home/ec2-user/ftx-recorder/trades_recorder.py
 
 Environment=PYTHONUNBUFFERED=1
 
-Restart=on-failure
+Restart=always
+
+RestartSec=2
 
 User=ec2-user
 
