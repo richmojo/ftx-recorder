@@ -102,9 +102,12 @@ def get_balances(client):
         client.write_points(balances_write)
 
 
-def get_orders(client):
-    # grab last 5 minutes worth
-    since = int(time.time() - 300)
+def get_orders(client, first=False):
+    if first:
+        since = int(time.time() - 18000)
+    else:
+        since = int(time.time() - 120)
+
     try:
         orders = Exchange.privateGetOrdersHistory(params={'start_time': since})
     except ccxt.BaseError as e:
@@ -140,9 +143,12 @@ def get_orders(client):
             client.write_points(orders_write)
 
 
-def get_fills(client):
-    # grab last 5 minutes worth
-    since = int(time.time() - 300)
+def get_fills(client, first=False):
+    if first:
+        since = int(time.time() - 18000)
+    else:
+        since = int(time.time() - 120)
+
     try:
         fills = Exchange.privateGetFills(params={'start_time': since})
     except ccxt.BaseError as e:
@@ -199,6 +205,8 @@ def recorder():
         else:
             logger.info("Created new account database.")
 
+    first = True
+
     while True:
         try:
             get_account(client)
@@ -211,15 +219,16 @@ def recorder():
             logger.error(f"Balances error: {e}")
             pass
         try:
-            get_orders(client)
+            get_orders(client, first)
         except Exception as e:
             logger.error(f"Orders error: {e}")
             pass
         try:
-            get_fills(client)
+            get_fills(client, first)
         except Exception as e:
             logger.error(f"fills error: {e}")
             pass
+        first = False
         time.sleep(0.5)
 
 
