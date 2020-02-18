@@ -48,3 +48,7 @@ to stop:
 to get status:
 
 `systemctl status account_recorder`
+
+## Databases
+
+The names of the databases in influxdb are accountdb and tradesdb.
