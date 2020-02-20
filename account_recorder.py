@@ -261,6 +261,7 @@ if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
+            thread_list = []
             for subaccount in MainConfig["Exchange"]["subaccount"]:
                 # Instantiates the thread
                 t = threading.Thread(target=run, args=(subaccount,))
