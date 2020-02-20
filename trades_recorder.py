@@ -5,6 +5,8 @@ from cryptofeed.defines import TRADES
 
 from config import *
 
+drop_db = False  # if True, deletes existing account database
+
 Exchange = ccxt.ftx(
             {
                 "apiKey": MainConfig["Exchange"]["api_key"],

@@ -19,6 +19,8 @@ logger = logging.getLogger("account_recorder")
 logger.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
 
+drop_db = False  # if True, deletes existing account database
+
 
 def get_exchange(subaccount):
 

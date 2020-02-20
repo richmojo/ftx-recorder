@@ -9,5 +9,3 @@ MainConfig = {
         "subaccount": ("BTC", "ETH", "EOS", "LINK", "XTZ", "BCH"),
     },
 
-
-drop_db = False  # if True, deletes existing account database
