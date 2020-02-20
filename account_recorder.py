@@ -26,19 +26,18 @@ logger.addHandler(stream_handler)
 drop_db = False  # if True, deletes existing account database
 
 
-def get_exchange(subaccount):
 
-    Exchange = ccxt.ftx(
-            {
-                "apiKey": MainConfig["Exchange"]["api_key"],
-                "secret": MainConfig["Exchange"]["api_secret"],
-                "timeout": 2000,
-                'enableRateLimit': False,
-                'headers': {
-                    'FTX-SUBACCOUNT': subaccount,
-            },
-        })
-    return Exchange
+
+Exchange = ccxt.ftx(
+        {
+            "apiKey": MainConfig["Exchange"]["api_key"],
+            "secret": MainConfig["Exchange"]["api_secret"],
+            "timeout": 2000,
+            'enableRateLimit': False,
+            'headers': {
+                'FTX-SUBACCOUNT': subaccount,
+        },
+    })
 
 def get_account(client):
     try:
@@ -259,8 +258,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     while True:
         try:
-            Exchange = get_exchange(str(args.subaccount))
-            recorder(str(args.subaccount))
+            recorder(args.subaccount)
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
