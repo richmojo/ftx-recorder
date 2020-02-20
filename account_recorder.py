@@ -258,7 +258,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     while True:
         try:
-            recorder(args.subaccount)
+            recorder(str(args.subaccount))
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
