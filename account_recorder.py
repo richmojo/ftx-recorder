@@ -255,6 +255,7 @@ def recorder(sub):
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
+    args = parser.parse_args()
     while True:
         try:
             Exchange = get_exchange(str(args.subaccount))
