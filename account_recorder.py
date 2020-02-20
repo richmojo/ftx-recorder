@@ -248,7 +248,7 @@ def run(sub):
                 logger.error(f"fills error: {e}")
                 pass
             first = False
-            time.sleep(10.0)
+            time.sleep(5.0)
     recorder(sub)
 
 if __name__ == "__main__":
