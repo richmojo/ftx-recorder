@@ -25,22 +25,6 @@ logger.addHandler(stream_handler)
 drop_db = False  # if True, deletes existing account database
 
 
-
-
-def get_exchange(sub):
-
-    Exchange = ccxt.ftx(
-        {
-            "apiKey": MainConfig["Exchange"]["api_key"],
-            "secret": MainConfig["Exchange"]["api_secret"],
-            "timeout": 2000,
-            'enableRateLimit': False,
-            'headers': {
-                'FTX-SUBACCOUNT': sub,
-        },
-    })
-    return Exchange
-
 def get_account(client):
     try:
         account = Exchange.privateGetAccount()
@@ -255,7 +239,16 @@ def recorder(sub):
         time.sleep(0.5)
 
 def run(sub):
-    Exchange = get_exchange(sub)
+    Exchange = ccxt.ftx(
+        {
+            "apiKey": MainConfig["Exchange"]["api_key"],
+            "secret": MainConfig["Exchange"]["api_secret"],
+            "timeout": 2000,
+            'enableRateLimit': False,
+            'headers': {
+                'FTX-SUBACCOUNT': sub,
+        },
+    })
     recorder(sub)
 
 if __name__ == "__main__":
