@@ -252,7 +252,7 @@ if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
-            for subaccount in MainConfig["Exchange"]["subaccounts"]:
+            for subaccount in MainConfig["Exchange"]["subaccount"]:
                 Exchange = get_exchange(subaccount)
                 recorder(subaccount)
         except Exception as e:
