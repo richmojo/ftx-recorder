@@ -35,7 +35,7 @@ Exchange = ccxt.ftx(
             "timeout": 2000,
             'enableRateLimit': False,
             'headers': {
-                'FTX-SUBACCOUNT': subaccount,
+                'FTX-SUBACCOUNT': args.subaccount,
         },
     })
 
