@@ -13,7 +13,7 @@ Type=simple
 
 WorkingDirectory=/home/ec2-user/ftx-recorder
 
-ExecStart=/usr/bin/python3 /home/ec2-user/ftx-recorder/mult_account_recorder.py
+ExecStart=/usr/bin/python3 /home/ec2-user/ftx-recorder/maccount_recorder.py
 
 Environment=PYTHONUNBUFFERED=1
 

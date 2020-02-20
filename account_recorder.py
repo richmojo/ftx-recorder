@@ -5,12 +5,10 @@ import argparse
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 from subprocess import Popen
+import threading
 
 from config import *
 
-parser = argparse.ArgumentParser()
-parser.add_argument("--subaccount")
-args = parser.parse_args()
 
 formatter = logging.Formatter(
     fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
@@ -29,14 +27,16 @@ drop_db = False  # if True, deletes existing account database
 
 
 
-Exchange = ccxt.ftx(
+def get_exchange(sub):
+
+    Exchange = ccxt.ftx(
         {
             "apiKey": MainConfig["Exchange"]["api_key"],
             "secret": MainConfig["Exchange"]["api_secret"],
             "timeout": 2000,
             'enableRateLimit': False,
             'headers': {
-                'FTX-SUBACCOUNT': str(args.subaccount),
+                'FTX-SUBACCOUNT': sub,
         },
     })
 
@@ -253,12 +253,24 @@ def recorder(sub):
         first = False
         time.sleep(0.5)
 
+def run(sub):
+    Exchange = get_exchange(sub)
+    recorder(sub)
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
-            recorder(str(args.subaccount))
+            for subaccount in MainConfig["Exchange"]["subaccount"]:
+                # Instantiates the thread
+                t = threading.Thread(target=run, args=(subaccount,))
+                # Sticks the thread in a list so that it remains accessible
+                thread_list.append(t)
+            # from the main-thread, starts child threads
+            for thread in thread_list:
+                thread.start()
+            for thread in thread_list:
+                thread.join()
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
