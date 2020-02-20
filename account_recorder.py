@@ -39,6 +39,7 @@ def get_exchange(sub):
                 'FTX-SUBACCOUNT': sub,
         },
     })
+    return Exchange
 
 def get_account(client):
     try:
