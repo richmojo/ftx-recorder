@@ -4,7 +4,7 @@ import logging
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
-from config import MainConfig
+from config import *
 
 
 formatter = logging.Formatter(
