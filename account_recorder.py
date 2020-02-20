@@ -10,6 +10,7 @@ from config import *
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--subaccount")
+args = parser.parse_args()
 
 formatter = logging.Formatter(
     fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
@@ -35,7 +36,7 @@ Exchange = ccxt.ftx(
             "timeout": 2000,
             'enableRateLimit': False,
             'headers': {
-                'FTX-SUBACCOUNT': args.subaccount,
+                'FTX-SUBACCOUNT': str(args.subaccount),
         },
     })
 
@@ -255,7 +256,6 @@ def recorder(sub):
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
-    args = parser.parse_args()
     while True:
         try:
             recorder(str(args.subaccount))
