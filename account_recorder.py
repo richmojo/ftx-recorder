@@ -8,7 +8,7 @@ from influxdb.exceptions import InfluxDBClientError
 from config import *
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--subaccount")
+parser.add_argument("--subaccount",choices=MainConfig["Exchange"]["subaccount"])
 
 formatter = logging.Formatter(
     fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
