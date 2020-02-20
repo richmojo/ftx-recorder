@@ -249,7 +249,7 @@ def run(sub):
                 pass
             first = False
             time.sleep(0.5)
-
+    recorder(sub)
 
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
