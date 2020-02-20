@@ -206,18 +206,18 @@ def recorder(sub):
     if drop_db:
         logger.info("Deleting existing account database.")
         try:
-            client.drop_database("accountdb")
+            client.drop_database("{}_accountdb".format(sub))
         except InfluxDBClientError:
             logger.info("No existing account database.")
-            client.create_database("accountdb")
+            client.create_database("{}_accountdb".format(sub))
         else:
             logger.info("Deleted existing account database.")
-            client.create_database("accountdb")
+            client.create_database("{}_accountdb".format(sub))
         finally:
             logger.info("Created new account database.")
     else:
         try:
-            client.create_database("accountdb")
+            client.create_database("{}_accountdb".format(sub))
         except InfluxDBClientError:
             logger.info("Using existing account database.")
         else:
