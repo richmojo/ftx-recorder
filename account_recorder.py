@@ -1,11 +1,14 @@
 import time
 from datetime import datetime
 import logging
+import argparse
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
 from config import *
 
+parser = argparse.ArgumentParser()
+parser.add_argument("--subaccount")
 
 formatter = logging.Formatter(
     fmt="%(asctime)s - %(levelname)s - %(module)s - %(message)s"
@@ -254,9 +257,8 @@ if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
-            for subaccount in MainConfig["Exchange"]["subaccount"]:
-                Exchange = get_exchange(subaccount)
-                recorder(subaccount)
+            Exchange = get_exchange(str(args.subaccount))
+            recorder(str(args.subaccount))
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
