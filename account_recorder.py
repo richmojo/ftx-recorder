@@ -4,7 +4,7 @@ import logging
 from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 
-from config import *
+from config import MainConfig
 
 
 formatter = logging.Formatter(
@@ -19,6 +19,20 @@ logger = logging.getLogger("account_recorder")
 logger.setLevel(logging.INFO)
 logger.addHandler(stream_handler)
 
+
+def get_exchange(subaccount):
+
+    Exchange = ccxt.ftx(
+            {
+                "apiKey": MainConfig["Exchange"]["api_key"],
+                "secret": MainConfig["Exchange"]["api_secret"],
+                "timeout": 2000,
+                'enableRateLimit': False,
+                'headers': {
+                    'FTX-SUBACCOUNT': subaccount,
+            },
+        })
+    return Exchange
 
 def get_account(client):
     try:
@@ -182,9 +196,9 @@ def get_fills(client, first=False):
             client.write_points(fills_write)
 
 
-def recorder():
+def recorder(sub):
     client = InfluxDBClient(
-        host="localhost", port=8086, database="accountdb"
+        host="localhost", port=8086, database="{}_accountdb".format(sub)
     )
 
     if drop_db:
@@ -238,7 +252,9 @@ if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
-            recorder()
+            for subaccount in MainConfig["Exchange"]["subaccounts"]:
+                Exchange = get_exchange(subaccount)
+                recorder(subaccount)
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
