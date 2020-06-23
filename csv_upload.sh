@@ -4,7 +4,7 @@ influx -database 'BTC_accountdb' -execute 'select * from account' -format 'csv' 
 
 # move csv's
 echo "Moving csv's"
-mv btc_account.csv Dropbox-Uploader/btc_account.csv
+mv btc_account.csv ../Dropbox-Uploader/btc_account.csv
 
 # upload csv's
 echo "Uploading csv's"
