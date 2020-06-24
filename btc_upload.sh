@@ -20,12 +20,12 @@ mv BTC_positions.csv ../Dropbox-Uploader/BTC_positions.csv
 echo "Uploading csv's"
 cd ..
 cd Dropbox-Uploader
-./dropbox_uploader.sh upload BTC_account.csv /dropbox/rltrader
-./dropbox_uploader.sh upload /BTC_all_positions.csv /dropbox/rltrader
-./dropbox_uploader.sh upload BTC_balances.csv /dropbox/rltrader
-./dropbox_uploader.sh upload BTC_fills.csv /dropbox/rltrader
-./dropbox_uploader.sh upload BTC_orders.csv /dropbox/rltrader
-./dropbox_uploader.sh upload BTC_positions.csv /dropbox/rltrader
+./dropbox_uploader.sh upload BTC_account.csv /rltrader
+./dropbox_uploader.sh upload BTC_all_positions.csv /rltrader
+./dropbox_uploader.sh upload BTC_balances.csv /rltrader
+./dropbox_uploader.sh upload BTC_fills.csv /rltrader
+./dropbox_uploader.sh upload BTC_orders.csv /rltrader
+./dropbox_uploader.sh upload BTC_positions.csv /rltrader
 
 # delete csv's
 rm -f BTC_account.csv
