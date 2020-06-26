@@ -1,23 +1,23 @@
 # get csv's
 echo "Getting csv's"
-influx -database 'rltrader' -execute 'select * from ALGO-PERP' -format 'csv' > rl_algo_old.csv
-influx -database 'rltrader' -execute 'select * from ALGO-PERP-ALGO' -format 'csv' > rl_algo.csv
-influx -database 'rltrader' -execute 'select * from ALT-PERP' -format 'csv' > rl_alt_old.csv
-influx -database 'rltrader' -execute 'select * from ALT-PERP-ALT' -format 'csv' > rl_alt.csv
-influx -database 'rltrader' -execute 'select * from BCH-PERP' -format 'csv' > rl_bch.csv
-influx -database 'rltrader' -execute 'select * from BTC-PERP' -format 'csv' > rl_btc_old.csv
-influx -database 'rltrader' -execute 'select * from BTC-PERP-BTC' -format 'csv' > rl_btc.csv
-influx -database 'rltrader' -execute 'select * from EOS-PERP' -format 'csv' > rl_eos_old.csv
-influx -database 'rltrader' -execute 'select * from EOS-PERP-EOS' -format 'csv' > rl_eos.csv
-influx -database 'rltrader' -execute 'select * from ETH-PERP' -format 'csv' > rl_eth_old.csv
-influx -database 'rltrader' -execute 'select * from ETH-PERP-ETH' -format 'csv' > rl_eth.csv
-influx -database 'rltrader' -execute 'select * from LINK-PERP' -format 'csv' > rl_link_old.csv
-influx -database 'rltrader' -execute 'select * from LINK-PERP-LINK' -format 'csv' > rl_link.csv
-influx -database 'rltrader' -execute 'select * from LTC-PERP' -format 'csv' > rl_ltc_old.csv
-influx -database 'rltrader' -execute 'select * from LTC-PERP-LTC' -format 'csv' > rl_ltc.csv
-influx -database 'rltrader' -execute 'select * from OKB-PERP' -format 'csv' > rl_okb_old.csv
-influx -database 'rltrader' -execute 'select * from TOMO-PERP' -format 'csv' > rl_tomo_old.csv
-influx -database 'rltrader' -execute 'select * from XTZ-PERP' -format 'csv' > rl_xtz_old.csv
+influx -database 'rltrader' -execute 'select * from "ALGO-PERP"' -format 'csv' > rl_algo_old.csv
+influx -database 'rltrader' -execute 'select * from "ALGO-PERP-ALGO"' -format 'csv' > rl_algo.csv
+influx -database 'rltrader' -execute 'select * from "ALT-PERP"' -format 'csv' > rl_alt_old.csv
+influx -database 'rltrader' -execute 'select * from "ALT-PERP-ALT"' -format 'csv' > rl_alt.csv
+influx -database 'rltrader' -execute 'select * from "BCH-PERP"' -format 'csv' > rl_bch.csv
+influx -database 'rltrader' -execute 'select * from "BTC-PERP"' -format 'csv' > rl_btc_old.csv
+influx -database 'rltrader' -execute 'select * from "BTC-PERP-BTC"' -format 'csv' > rl_btc.csv
+influx -database 'rltrader' -execute 'select * from "EOS-PERP"' -format 'csv' > rl_eos_old.csv
+influx -database 'rltrader' -execute 'select * from "EOS-PERP-EOS"' -format 'csv' > rl_eos.csv
+influx -database 'rltrader' -execute 'select * from "ETH-PERP"' -format 'csv' > rl_eth_old.csv
+influx -database 'rltrader' -execute 'select * from "ETH-PERP-ETH"' -format 'csv' > rl_eth.csv
+influx -database 'rltrader' -execute 'select * from "LINK-PERP"' -format 'csv' > rl_link_old.csv
+influx -database 'rltrader' -execute 'select * from "LINK-PERP-LINK"' -format 'csv' > rl_link.csv
+influx -database 'rltrader' -execute 'select * from "LTC-PER"P' -format 'csv' > rl_ltc_old.csv
+influx -database 'rltrader' -execute 'select * from "LTC-PERP-LTC"' -format 'csv' > rl_ltc.csv
+influx -database 'rltrader' -execute 'select * from "OKB-PERP"' -format 'csv' > rl_okb_old.csv
+influx -database 'rltrader' -execute 'select * from "TOMO-PERP"' -format 'csv' > rl_tomo_old.csv
+influx -database 'rltrader' -execute 'select * from "XTZ-PERP"' -format 'csv' > rl_xtz_old.csv
 influx -database 'rltrader' -execute 'select * from account' -format 'csv' > rl_account.csv
 
 influx -database 'Tradesdb' -execute 'select * from trades-FTX' -format 'csv' > tradesdb.csv
