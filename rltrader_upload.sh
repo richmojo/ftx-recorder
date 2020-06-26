@@ -70,7 +70,7 @@ cd Dropbox-Uploader
 ./dropbox_uploader.sh upload rl_xtz_old.csv /rltrader
 ./dropbox_uploader.sh upload rl_account.csv /rltrader
 
-./dropbox_uploader.sh upload tradesdb.csv /dropbox/rltrader
+./dropbox_uploader.sh upload tradesdb.csv /rltrader
 
 # delete csv's
 rm -f rl_algo_old.csv
