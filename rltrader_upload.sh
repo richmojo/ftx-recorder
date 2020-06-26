@@ -20,7 +20,7 @@ influx -database 'rltrader' -execute 'select * from "TOMO-PERP"' -format 'csv' >
 influx -database 'rltrader' -execute 'select * from "XTZ-PERP"' -format 'csv' > rl_xtz_old.csv
 influx -database 'rltrader' -execute 'select * from account' -format 'csv' > rl_account.csv
 
-influx -database 'Tradesdb' -execute 'select * from trades-FTX' -format 'csv' > tradesdb.csv
+influx -database 'Tradesdb' -execute 'select * from "trades-FTX"' -format 'csv' > tradesdb.csv
 
 # move csv's
 echo "Moving csv's"
