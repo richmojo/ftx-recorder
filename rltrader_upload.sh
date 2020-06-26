@@ -50,25 +50,25 @@ mv tradesdb.csv ../Dropbox-Uploader/tradesdb.csv
 echo "Uploading csv's"
 cd ..
 cd Dropbox-Uploader
-./dropbox_uploader.sh upload rl_algo_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_algo.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_alt_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_alt.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_bch.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_btc_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_btc.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_eos_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_eos.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_eth_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_eth.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_link_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_link.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_ltc_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_ltc.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_okb_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_tomo_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_xtz_old.csv /dropbox/rltrader
-./dropbox_uploader.sh upload rl_account.csv /dropbox/rltrader
+./dropbox_uploader.sh upload rl_algo_old.csv /rltrader
+./dropbox_uploader.sh upload rl_algo.csv /rltrader
+./dropbox_uploader.sh upload rl_alt_old.csv /rltrader
+./dropbox_uploader.sh upload rl_alt.csv /rltrader
+./dropbox_uploader.sh upload rl_bch.csv /rltrader
+./dropbox_uploader.sh upload rl_btc_old.csv /rltrader
+./dropbox_uploader.sh upload rl_btc.csv /rltrader
+./dropbox_uploader.sh upload rl_eos_old.csv /rltrader
+./dropbox_uploader.sh upload rl_eos.csv /rltrader
+./dropbox_uploader.sh upload rl_eth_old.csv /rltrader
+./dropbox_uploader.sh upload rl_eth.csv /rltrader
+./dropbox_uploader.sh upload rl_link_old.csv /rltrader
+./dropbox_uploader.sh upload rl_link.csv /rltrader
+./dropbox_uploader.sh upload rl_ltc_old.csv /rltrader
+./dropbox_uploader.sh upload rl_ltc.csv /rltrader
+./dropbox_uploader.sh upload rl_okb_old.csv /rltrader
+./dropbox_uploader.sh upload rl_tomo_old.csv /rltrader
+./dropbox_uploader.sh upload rl_xtz_old.csv /rltrader
+./dropbox_uploader.sh upload rl_account.csv /rltrader
 
 ./dropbox_uploader.sh upload tradesdb.csv /dropbox/rltrader
 
