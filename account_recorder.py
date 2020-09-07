@@ -102,7 +102,7 @@ def run(sub):
 
                 all_positions_write = {
                     "measurement": "all_positions",
-                    "tags":{"subaccount": sub,}
+                    "tags":{"subaccount": sub,},
                     "fields": {
                         "totalCollateralUsed": sum(
                             [p["collateralUsed"] for p in positions]
