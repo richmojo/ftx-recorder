@@ -6,6 +6,7 @@ from influxdb import InfluxDBClient
 from influxdb.exceptions import InfluxDBClientError
 from subprocess import Popen
 import threading
+import ccxt
 
 from config import *
 
@@ -50,7 +51,7 @@ def run(sub):
 
             account_write = {
                 "measurement": "account",
-                "tags": {"username": account["username"],},
+                "tags": {"username": account["username"],"subaccount": sub,},
                 "fields": {
                     "collateral": account["collateral"],
                     "freeCollateral": account["freeCollateral"],
@@ -77,7 +78,7 @@ def run(sub):
                 positions_write = [
                     {
                         "measurement": "positions",
-                        "tags": {"future": p["future"], "side": p["side"],},
+                        "tags": {"future": p["future"], "side": p["side"], "subaccount": sub,},
                         "fields": {
                             "collateralUsed": p["collateralUsed"],
                             "cost": p["cost"],
@@ -101,6 +102,7 @@ def run(sub):
 
                 all_positions_write = {
                     "measurement": "all_positions",
+                    "tags":{"subaccount": sub,}
                     "fields": {
                         "totalCollateralUsed": sum(
                             [p["collateralUsed"] for p in positions]
@@ -132,7 +134,7 @@ def run(sub):
             balances_write = [
                 {
                     "measurement": "balances",
-                    "tags": {"coin": c["coin"],},
+                    "tags": {"coin": c["coin"],"subaccount": sub,},
                     "fields": {
                         "free": float(c["free"]),
                         "total": float(c["total"]),
@@ -171,6 +173,7 @@ def run(sub):
                             "reduceOnly": o["reduceOnly"],
                             "status": o["status"],
                             "postOnly": o["postOnly"],
+                            "subaccount": sub,
                         },
                         "fields": {
                             "avgFillPrice": o["avgFillPrice"],
@@ -214,6 +217,7 @@ def run(sub):
                         "type": f["type"],
                         "liquidity": f["liquidity"],
                         "side": f["side"],
+                        "subaccount": sub,
                     },
                     "fields": {
                         "fee": f["fee"],
@@ -231,24 +235,24 @@ def run(sub):
 
     def recorder(sub):
         client = InfluxDBClient(
-            host="localhost", port=8086, database="{}_accountdb".format(sub)
+            host="localhost", port=8086, database="accountdb"
         )
 
         if drop_db:
             logger.info("Deleting existing account database.")
             try:
-                client.drop_database("{}_accountdb".format(sub))
+                client.drop_database("accountdb")
             except InfluxDBClientError:
                 logger.info("No existing account database.")
-                client.create_database("{}_accountdb".format(sub))
+                client.create_database("accountdb")
             else:
                 logger.info("Deleted existing account database.")
-                client.create_database("{}_accountdb".format(sub))
+                client.create_database("accountdb")
             finally:
                 logger.info("Created new account database.")
         else:
             try:
-                client.create_database("{}_accountdb".format(sub))
+                client.create_database("accountdb")
             except InfluxDBClientError:
                 logger.info("Using existing account database.")
             else:
@@ -281,12 +285,27 @@ def run(sub):
             time.sleep(5.0)
     recorder(sub)
 
+def get_subaccounts():
+    exchange = ccxt.ftx(
+        {
+            "apiKey": MainConfig["Exchange"]["api_key"],
+            "secret": MainConfig["Exchange"]["api_secret"],
+            "timeout": 2000,
+        }
+    )
+    response = exchange.request('subaccounts', api='private', method='GET')
+    subaccounts = []
+    for i in range(len(response['result'])):
+        subaccounts.append(response['result'][i]['nickname'])
+    return subaccounts
+
 if __name__ == "__main__":
     logger.info("Starting account recorder.")
     while True:
         try:
             thread_list = []
-            for subaccount in MainConfig["Exchange"]["subaccount"]:
+            subaccounts = get_subaccounts()
+            for subaccount in subaccounts:
                 # Instantiates the thread
                 t = threading.Thread(target=run, args=(subaccount,))
                 # Sticks the thread in a list so that it remains accessible
