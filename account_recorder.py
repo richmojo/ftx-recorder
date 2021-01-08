@@ -282,7 +282,7 @@ def run(sub):
                 logger.error(f"fills error: {e}")
                 pass
             try:
-                subs = get_subaccounts(client, first)
+                subs = get_subaccounts()
             except Exception as e:
                 logger.error(f"fills error: {e}")
                 pass
