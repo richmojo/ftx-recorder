@@ -323,7 +323,7 @@ def get_subaccounts():
         "fields": {
             "totalBalance": total_balance
         },
-        "time": t,
+        "time": datetime.utcnow().isoformat(),
     }
     account_write["fields"] = {
         k: float(v) for k, v in account_write["fields"].items() if v is not None
