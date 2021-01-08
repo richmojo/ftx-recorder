@@ -286,6 +286,11 @@ def run(sub):
     recorder(sub)
 
 def get_subaccounts():
+    
+    client = InfluxDBClient(
+            host="localhost", port=8086, database="accountdb"
+        )
+
     exchange = ccxt.ftx(
         {
             "apiKey": MainConfig["Exchange"]["api_key"],
@@ -297,6 +302,34 @@ def get_subaccounts():
     subaccounts = []
     for i in range(len(response['result'])):
         subaccounts.append(response['result'][i]['nickname'])
+
+    total_balance = 0
+    for sa in subaccounts:
+        Exchange = ccxt.ftx(
+            {
+                "apiKey": MainConfig["Exchange"]["api_key"],
+                "secret": MainConfig["Exchange"]["api_secret"],
+                "timeout": 2000,
+                'enableRateLimit': False,
+                'headers': {
+                    'FTX-SUBACCOUNT': sa,
+            },
+         })
+        balance = Exchange.fetchBalance()
+        total_balance += balance['info']['result'][1]['usdValue']
+
+    account_write = {
+        "measurement": "account",
+        "fields": {
+            "totalBalance": total_balance
+        },
+        "time": t,
+    }
+    account_write["fields"] = {
+        k: float(v) for k, v in account_write["fields"].items() if v is not None
+    }
+    client.write_points([account_write])
+
     return subaccounts
 
 if __name__ == "__main__":
