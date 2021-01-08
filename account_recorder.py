@@ -281,7 +281,14 @@ def run(sub):
             except Exception as e:
                 logger.error(f"fills error: {e}")
                 pass
+            try:
+                get_subaccounts(client, first)
+            except Exception as e:
+                logger.error(f"fills error: {e}")
+                pass
             first = False
+
+
             time.sleep(5.0)
     recorder(sub)
 
