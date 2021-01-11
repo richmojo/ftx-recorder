@@ -310,7 +310,15 @@ def get_subaccounts():
     for i in range(len(response['result'])):
         subaccounts.append(response['result'][i]['nickname'])
 
+    
     total_balance = 0
+    balance = Exchange.fetchBalance()
+
+    assets = balance['info']['result']
+
+    for i in range(len(assets)):
+        total_balance += assets[i]['usdValue']
+
     for sa in subaccounts:
         Exchange = ccxt.ftx(
             {
@@ -322,8 +330,12 @@ def get_subaccounts():
                     'FTX-SUBACCOUNT': sa,
             },
          })
+        
         balance = Exchange.fetchBalance()
-        total_balance += balance['info']['result'][1]['usdValue']
+        assets = balance['info']['result']
+        
+        for i in range(len(assets)):
+            total_balance += assets[i]['usdValue']
 
     account_write = {
         "measurement": "account",
