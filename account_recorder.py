@@ -298,14 +298,14 @@ def get_subaccounts():
             host="localhost", port=8086, database="accountdb"
         )
 
-    exchange = ccxt.ftx(
+    Exchange = ccxt.ftx(
         {
             "apiKey": MainConfig["Exchange"]["api_key"],
             "secret": MainConfig["Exchange"]["api_secret"],
             "timeout": 2000,
         }
     )
-    response = exchange.request('subaccounts', api='private', method='GET')
+    response = Exchange.request('subaccounts', api='private', method='GET')
     subaccounts = []
     for i in range(len(response['result'])):
         subaccounts.append(response['result'][i]['nickname'])
