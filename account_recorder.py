@@ -312,7 +312,9 @@ def get_subaccounts():
 
     
     total_balance = 0
+
     balance = Exchange.fetchBalance()
+    total_usd = balance['USD']['total']
 
     assets = balance['info']['result']
 
@@ -332,15 +334,18 @@ def get_subaccounts():
          })
         
         balance = Exchange.fetchBalance()
+        total_usd += balance['USD']['total']
         assets = balance['info']['result']
         
         for i in range(len(assets)):
             total_balance += assets[i]['usdValue']
+            total_usd +=
 
     account_write = {
         "measurement": "account",
         "fields": {
-            "totalBalance": total_balance
+            "totalBalance": total_balance,
+            "usdBalance": total_usd,
         },
         "time": datetime.utcnow().isoformat(),
     }
