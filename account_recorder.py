@@ -339,7 +339,6 @@ def get_subaccounts():
         
         for i in range(len(assets)):
             total_balance += assets[i]['usdValue']
-            total_usd +=
 
     account_write = {
         "measurement": "account",
