@@ -54,15 +54,6 @@ def run(sub):
                 "tags": {"username": account["username"],"subaccount": sub,},
                 "fields": {
                     "collateral": account["collateral"],
-                    "freeCollateral": account["freeCollateral"],
-                    "percentUsedCollateral": (
-                        account["collateral"] - account["freeCollateral"]
-                    )
-                    / account["collateral"],
-                    "percentFreeCollateral": account["freeCollateral"]
-                    / account["collateral"],
-                    "marginFraction": account["marginFraction"],
-                    "openMarginFraction": account["openMarginFraction"],
                     "totalAccountValue": account["totalAccountValue"],
                     "totalPositionSize": account["totalPositionSize"],
                     "currentLeverage": account["totalPositionSize"] / account["collateral"],
@@ -80,15 +71,10 @@ def run(sub):
                         "measurement": "positions",
                         "tags": {"future": p["future"], "side": p["side"], "subaccount": sub,},
                         "fields": {
-                            "collateralUsed": p["collateralUsed"],
                             "cost": p["cost"],
-                            "entryPrice": p["entryPrice"],
-                            "estimatedLiquidationPrice": p["estimatedLiquidationPrice"],
                             "netSize": p["netSize"],
                             "openSize": p["openSize"],
-                            "realizedPnl": p["realizedPnl"],
                             "size": p["size"],
-                            "unrealizedPnl": p["unrealizedPnl"],
                         },
                         "time": t,
                     }
@@ -130,15 +116,15 @@ def run(sub):
         else:
             t = datetime.utcnow().isoformat()
             balances = balances["info"]["result"]
+            total_usd = balances['USD']['total']
 
             balances_write = [
                 {
                     "measurement": "balances",
                     "tags": {"coin": c["coin"],"subaccount": sub,},
                     "fields": {
-                        "free": float(c["free"]),
-                        "total": float(c["total"]),
                         "usdValue": float(c["usdValue"]),
+                        "usdBalance": total_usd,
                     },
                     "time": t,
                 }
