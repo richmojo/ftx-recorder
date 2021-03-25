@@ -115,9 +115,9 @@ def run(sub):
             raise e
         else:
             t = datetime.utcnow().isoformat()
-            balances = balances["info"]["result"]
             total_usd = balances['USD']['total']
-
+            balances = balances["info"]["result"]
+            
             balances_write = [
                 {
                     "measurement": "balances",
