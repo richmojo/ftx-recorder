@@ -309,7 +309,7 @@ def get_subaccounts():
     assets = balance['info']['result']
 
     for i in range(len(assets)):
-        total_balance += assets[i]['usdValue']
+        total_balance += float(assets[i]['usdValue'])
 
     for sa in subaccounts:
         Exchange = ccxt.ftx(
@@ -328,7 +328,7 @@ def get_subaccounts():
         assets = balance['info']['result']
         
         for i in range(len(assets)):
-            total_balance += assets[i]['usdValue']
+            total_balance += float(assets[i]['usdValue'])
 
     account_write = {
         "measurement": "account",
