@@ -114,23 +114,27 @@ def run(sub):
             logger.error(f"Could not get balances with error: {e}")
             raise e
         else:
-            t = datetime.utcnow().isoformat()
-            total_usd = balances['USD']['total']
-            balances = balances["info"]["result"]
-            
-            balances_write = [
-                {
-                    "measurement": "balances",
-                    "tags": {"coin": c["coin"],"subaccount": sub,},
-                    "fields": {
-                        "usdValue": float(c["usdValue"]),
-                        "usdBalance": total_usd,
-                    },
-                    "time": t,
-                }
-                for c in balances
-            ]
-            client.write_points(balances_write)
+            try:
+                t = datetime.utcnow().isoformat()
+                total_usd = float(balances['USD']['total'])
+                balances = balances["info"]["result"]
+                
+                balances_write = [
+                    {
+                        "measurement": "balances",
+                        "tags": {"coin": c["coin"],"subaccount": sub,},
+                        "fields": {
+                            "usdValue": float(c["usdValue"]),
+                            "usdBalance": total_usd,
+                        },
+                        "time": t,
+                    }
+                    for c in balances
+                ]
+                client.write_points(balances_write)
+            except:
+                logger.info(f"Couldnt complete sub {sub}")
+
 
 
     def get_orders(client, first=False):
