@@ -11,7 +11,7 @@ Exchange = ccxt.ftx(
             {
                 "apiKey": MainConfig["Exchange"]["api_key"],
                 "secret": MainConfig["Exchange"]["api_secret"],
-    			'timeout': 2000,`
+    			'timeout': 2000,
     			'enableRateLimit': False,
         })
 
