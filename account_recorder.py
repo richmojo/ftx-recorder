@@ -361,7 +361,6 @@ if __name__ == "__main__":
                 thread.start()
             for thread in thread_list:
                 thread.join()
-            time.sleep(1.0)
         except Exception as e:
             logger.error(f"Main error {e}")
             continue
